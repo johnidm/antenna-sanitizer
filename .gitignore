@@ -1,0 +1,14 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+
+# Virtual environments
+.venv
+
+# Tooling caches
+.ruff_cache/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

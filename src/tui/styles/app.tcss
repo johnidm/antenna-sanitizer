@@ -1,0 +1,13 @@
+#body {
+    padding: 1 2;
+}
+
+#source {
+    margin-bottom: 1;
+}
+
+#result {
+    border: round $primary;
+    padding: 1 2;
+    height: auto;
+}
