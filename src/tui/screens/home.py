@@ -1,6 +1,9 @@
 """Main screen: type input, see the sanitized result live."""
 
+from typing import ClassVar
+
 from textual.app import ComposeResult
+from textual.binding import Binding, BindingType
 from textual.containers import Vertical
 from textual.screen import Screen
 from textual.widgets import Footer, Header, Input
@@ -10,6 +13,10 @@ from src.tui.widgets.result_panel import ResultPanel
 
 
 class HomeScreen(Screen[None]):
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("escape", "app.pop_screen", "Back"),
+    ]
+
     def __init__(self, sanitizer: Sanitizer) -> None:
         super().__init__()
         self.sanitizer = sanitizer

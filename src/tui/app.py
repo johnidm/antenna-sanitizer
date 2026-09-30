@@ -7,7 +7,7 @@ from textual.binding import Binding, BindingType
 
 from src.core.rules import default_rules
 from src.core.sanitizer import Sanitizer
-from src.tui.screens.home import HomeScreen
+from src.tui.screens.menu import MenuScreen
 
 
 class AntennaSanitizerApp(App[None]):
@@ -23,7 +23,7 @@ class AntennaSanitizerApp(App[None]):
         self.sanitizer = sanitizer or Sanitizer.from_rules(default_rules())
 
     def on_mount(self) -> None:
-        self.push_screen(HomeScreen(self.sanitizer))
+        self.push_screen(MenuScreen(self.sanitizer))
 
     def action_toggle_dark(self) -> None:
         self.theme = "textual-light" if self.current_theme.dark else "textual-dark"
