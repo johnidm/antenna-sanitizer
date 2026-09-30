@@ -11,11 +11,12 @@ from textual.widgets import Footer, Header, OptionList
 from textual.widgets.option_list import Option
 
 from src.core.sanitizer import Sanitizer
-from src.tui.screens.home import HomeScreen
 from src.tui.screens.sample import SampleScreen
+from src.tui.screens.sanitize import SanitizeScreen
 
 
 class MenuScreen(Screen[None]):
+    TITLE = "Menu"
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("escape", "app.quit", "Quit", show=False),
     ]
@@ -36,8 +37,8 @@ class MenuScreen(Screen[None]):
 
     @on(OptionList.OptionSelected)
     def on_option_selected(self, event: OptionList.OptionSelected) -> None:
-        option_id = event.option.id
-        if option_id == "random-stations":
-            self.app.push_screen(SampleScreen())
-        elif option_id == "sanitize":
-            self.app.push_screen(HomeScreen(self.sanitizer))
+        match event.option.id:
+            case "random-stations":
+                self.app.push_screen(SampleScreen())
+            case "sanitize":
+                self.app.push_screen(SanitizeScreen(self.sanitizer))

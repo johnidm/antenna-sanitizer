@@ -1,4 +1,4 @@
-"""Main screen: type input, see the sanitized result live."""
+"""Sanitize playground: type input, see the sanitized result live."""
 
 from typing import ClassVar
 
@@ -12,7 +12,8 @@ from src.core.sanitizer import Sanitizer
 from src.tui.widgets.result_panel import ResultPanel
 
 
-class HomeScreen(Screen[None]):
+class SanitizeScreen(Screen[None]):
+    TITLE = "Sanitize text"
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("escape", "app.pop_screen", "Back"),
     ]
