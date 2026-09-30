@@ -9,6 +9,7 @@ from src.core.rules import default_rules
 from src.core.sanitizer import Sanitizer
 from src.core.stations import Station, load_stations
 from src.tui.screens.menu import MenuScreen
+from src.tui.theme import ANTENNA_DARK, ANTENNA_LIGHT
 
 
 class AntennaSanitizerApp(App[None]):
@@ -23,6 +24,9 @@ class AntennaSanitizerApp(App[None]):
         super().__init__()
         self.sanitizer = sanitizer or Sanitizer.from_rules(default_rules())
         self._stations: list[Station] | None = None
+        self.register_theme(ANTENNA_DARK)
+        self.register_theme(ANTENNA_LIGHT)
+        self.theme = ANTENNA_DARK.name
 
     def get_stations(self) -> list[Station]:
         """Return stations, loading the CSV once on first use."""
@@ -34,4 +38,4 @@ class AntennaSanitizerApp(App[None]):
         self.push_screen(MenuScreen(self.sanitizer))
 
     def action_toggle_dark(self) -> None:
-        self.theme = "textual-light" if self.current_theme.dark else "textual-dark"
+        self.theme = ANTENNA_LIGHT.name if self.current_theme.dark else ANTENNA_DARK.name
