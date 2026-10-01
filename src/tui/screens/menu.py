@@ -11,7 +11,6 @@ from textual.screen import Screen
 from textual.widgets import Footer, Header, OptionList, Static
 from textual.widgets.option_list import Option
 
-from src.core.sanitizer import Sanitizer
 from src.tui.screens.sample import SampleScreen
 from src.tui.screens.sanitize import SanitizeScreen
 from src.tui.widgets.banner import Banner
@@ -30,10 +29,6 @@ class MenuScreen(Screen[None]):
         Binding("escape", "app.quit", "Quit", show=False),
     ]
 
-    def __init__(self, sanitizer: Sanitizer) -> None:
-        super().__init__()
-        self.sanitizer = sanitizer
-
     def compose(self) -> ComposeResult:
         yield Header(icon="📡")
         with Vertical(id="menu-body"):
@@ -46,7 +41,7 @@ class MenuScreen(Screen[None]):
                     "random-stations",
                 ),
                 None,
-                _menu_option("✨", "Sanitize text", "Try the rule pipeline live", "sanitize"),
+                _menu_option("✨", "Sanitize text", "In development", "sanitize"),
                 id="menu",
                 classes="card",
             )
@@ -59,8 +54,7 @@ class MenuScreen(Screen[None]):
         self._load_station_count()
 
     def _stats(self, stations: str) -> str:
-        rules = len(self.sanitizer.rules)
-        return f"[$secondary]●[/] {rules} rules loaded  [dim]·[/]  [$secondary]●[/] {stations}"
+        return f"[$secondary]●[/] {stations}"
 
     @work(thread=True, exclusive=True)
     def _load_station_count(self) -> None:
@@ -79,4 +73,4 @@ class MenuScreen(Screen[None]):
             case "random-stations":
                 self.app.push_screen(SampleScreen())
             case "sanitize":
-                self.app.push_screen(SanitizeScreen(self.sanitizer))
+                self.app.push_screen(SanitizeScreen())

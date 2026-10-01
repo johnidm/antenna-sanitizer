@@ -5,8 +5,6 @@ from typing import ClassVar
 from textual.app import App
 from textual.binding import Binding, BindingType
 
-from src.core.rules import default_rules
-from src.core.sanitizer import Sanitizer
 from src.core.stations import Station, load_stations
 from src.tui.screens.menu import MenuScreen
 from src.tui.theme import ANTENNA_DARK, ANTENNA_LIGHT
@@ -20,9 +18,8 @@ class AntennaSanitizerApp(App[None]):
         Binding("d", "toggle_dark", "Toggle dark mode"),
     ]
 
-    def __init__(self, sanitizer: Sanitizer | None = None) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.sanitizer = sanitizer or Sanitizer.from_rules(default_rules())
         self._stations: list[Station] | None = None
         self.register_theme(ANTENNA_DARK)
         self.register_theme(ANTENNA_LIGHT)
@@ -35,7 +32,7 @@ class AntennaSanitizerApp(App[None]):
         return self._stations
 
     def on_mount(self) -> None:
-        self.push_screen(MenuScreen(self.sanitizer))
+        self.push_screen(MenuScreen())
 
     def action_toggle_dark(self) -> None:
         self.theme = ANTENNA_LIGHT.name if self.current_theme.dark else ANTENNA_DARK.name
