@@ -1,33 +1,33 @@
-"""Antenna color themes: warm amber dial on a deep night-blue receiver."""
+"""App color themes."""
 
 from textual.theme import Theme
 
-ANTENNA_DARK = Theme(
-    name="antenna-dark",
-    primary="#FFB000",
-    secondary="#2EC4B6",
-    accent="#FF6B5B",
-    foreground="#E8E4D9",
-    background="#0D1117",
-    surface="#151B24",
-    panel="#1C2430",
-    success="#7BD389",
-    warning="#FFB000",
-    error="#FF5A5F",
+GRUVBOX_DARK = Theme(
+    name="gruvbox-dark",
+    primary="#FABD2F",
+    secondary="#8EC07C",
+    accent="#FE8019",
+    foreground="#EBDBB4",
+    background="#282828",
+    surface="#3C3836",
+    panel="#504945",
+    success="#B8BB26",
+    warning="#FABD2F",
+    error="#FB4934",
     dark=True,
 )
 
-ANTENNA_LIGHT = Theme(
-    name="antenna-light",
-    primary="#B86E00",
-    secondary="#128C82",
-    accent="#D8483A",
-    foreground="#2A2622",
-    background="#F6F1E7",
-    surface="#FFFBF3",
-    panel="#EDE4D3",
-    success="#2E8B57",
-    warning="#B86E00",
-    error="#C0392B",
+GRUVBOX_LIGHT = Theme(
+    name="gruvbox-light",
+    primary="#B57614",
+    secondary="#427B58",
+    accent="#AF3A03",
+    foreground="#3C3836",
+    background="#FBF1C7",
+    surface="#F2E5BC",
+    panel="#EBDBB2",
+    success="#79740E",
+    warning="#B57614",
+    error="#9D0006",
     dark=False,
 )

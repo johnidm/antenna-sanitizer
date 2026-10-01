@@ -1,17 +1,16 @@
 """Main menu screen."""
 
-from typing import ClassVar, cast
+from typing import ClassVar
 
-from textual import on, work
+from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding, BindingType
 from textual.containers import Vertical
 from textual.content import Content
 from textual.screen import Screen
-from textual.widgets import Footer, Header, OptionList, Static
+from textual.widgets import Footer, Header, OptionList
 from textual.widgets.option_list import Option
 
-from src.core.sanitizer import Sanitizer
 from src.tui.screens.sample import SampleScreen
 from src.tui.screens.sanitize import SanitizeScreen
 from src.tui.widgets.banner import Banner
@@ -30,10 +29,6 @@ class MenuScreen(Screen[None]):
         Binding("escape", "app.quit", "Quit", show=False),
     ]
 
-    def __init__(self, sanitizer: Sanitizer) -> None:
-        super().__init__()
-        self.sanitizer = sanitizer
-
     def compose(self) -> ComposeResult:
         yield Header(icon="📡")
         with Vertical(id="menu-body"):
@@ -46,32 +41,13 @@ class MenuScreen(Screen[None]):
                     "random-stations",
                 ),
                 None,
-                _menu_option("✨", "Sanitize text", "Try the rule pipeline live", "sanitize"),
+                _menu_option("✨", "Sanitize text", "In development", "sanitize"),
                 id="menu",
                 classes="card",
             )
             menu.border_title = "Main menu"
             yield menu
-            yield Static(self._stats("loading stations…"), id="stats")
         yield Footer()
-
-    def on_mount(self) -> None:
-        self._load_station_count()
-
-    def _stats(self, stations: str) -> str:
-        rules = len(self.sanitizer.rules)
-        return f"[$secondary]●[/] {rules} rules loaded  [dim]·[/]  [$secondary]●[/] {stations}"
-
-    @work(thread=True, exclusive=True)
-    def _load_station_count(self) -> None:
-        from src.tui.app import AntennaSanitizerApp  # noqa: PLC0415
-
-        app = cast(AntennaSanitizerApp, self.app)
-        try:
-            label = f"{len(app.get_stations()):,} stations"
-        except OSError, ValueError:
-            label = "[$error]stations unavailable[/]"
-        app.call_from_thread(self.query_one("#stats", Static).update, self._stats(label))
 
     @on(OptionList.OptionSelected)
     def on_option_selected(self, event: OptionList.OptionSelected) -> None:
@@ -79,4 +55,4 @@ class MenuScreen(Screen[None]):
             case "random-stations":
                 self.app.push_screen(SampleScreen())
             case "sanitize":
-                self.app.push_screen(SanitizeScreen(self.sanitizer))
+                self.app.push_screen(SanitizeScreen())

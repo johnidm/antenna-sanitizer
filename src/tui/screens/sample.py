@@ -1,6 +1,6 @@
 """Screen that shows a random sample of radio stations."""
 
-from typing import ClassVar, cast
+from typing import ClassVar
 
 from textual import events
 from textual.app import ComposeResult
@@ -9,7 +9,7 @@ from textual.containers import Grid, VerticalScroll
 from textual.screen import Screen
 from textual.widgets import Footer, Header, Static
 
-from src.core.stations import pick_random
+from src.core.stations import Station, load_stations, pick_random
 from src.tui.widgets.station_card import StationCard
 
 SAMPLE_SIZE = 3
@@ -23,6 +23,16 @@ class SampleScreen(Screen[None]):
         Binding("escape", "app.pop_screen", "Back"),
         Binding("r", "reshuffle", "Pick again"),
     ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._stations: list[Station] | None = None
+
+    def get_stations(self) -> list[Station]:
+        """Return stations, loading the CSV once on first use."""
+        if self._stations is None:
+            self._stations = load_stations()
+        return self._stations
 
     def compose(self) -> ComposeResult:
         yield Header(icon="📡")
@@ -38,11 +48,8 @@ class SampleScreen(Screen[None]):
         self.query_one("#stations", Grid).set_class(event.size.width < NARROW_WIDTH, "-narrow")
 
     def action_reshuffle(self) -> None:
-        from src.tui.app import AntennaSanitizerApp  # noqa: PLC0415
-
-        app = cast(AntennaSanitizerApp, self.app)
         try:
-            stations = app.get_stations()
+            stations = self.get_stations()
             sample = pick_random(stations, n=SAMPLE_SIZE)
         except (OSError, ValueError) as exc:
             self.notify(str(exc), title="Stations unavailable", severity="error")

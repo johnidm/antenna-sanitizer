@@ -54,12 +54,6 @@ Footer {
     background: $primary 35%;
 }
 
-#stats {
-    width: 60;
-    margin-top: 1;
-    text-align: center;
-    color: $text-muted;
-}
 
 /* ---- Random stations --------------------------------------------------- */
 
@@ -81,19 +75,9 @@ Footer {
 
 /* ---- Sanitize ---------------------------------------------------------- */
 
-#source-card {
-    height: auto;
-    margin-bottom: 1;
-    padding: 0 1;
-}
-
-#source {
-    height: 1;
-    border: none;
-    background: transparent;
-    padding: 0;
-
-    &:focus {
-        border: none;
-    }
+#development-placeholder {
+    width: auto;
+    max-width: 50;
+    text-align: center;
+    padding: 2 4;
 }
