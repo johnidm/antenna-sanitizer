@@ -6,7 +6,7 @@ from textual.app import App
 from textual.binding import Binding, BindingType
 
 from src.tui.screens.menu import MenuScreen
-from src.tui.theme import ANTENNA_DARK, ANTENNA_LIGHT
+from src.tui.theme import GRUVBOX_DARK, GRUVBOX_LIGHT
 
 
 class AntennaSanitizerApp(App[None]):
@@ -19,12 +19,12 @@ class AntennaSanitizerApp(App[None]):
 
     def __init__(self) -> None:
         super().__init__()
-        self.register_theme(ANTENNA_DARK)
-        self.register_theme(ANTENNA_LIGHT)
-        self.theme = ANTENNA_DARK.name
+        self.register_theme(GRUVBOX_DARK)
+        self.register_theme(GRUVBOX_LIGHT)
+        self.theme = GRUVBOX_DARK.name
 
     def on_mount(self) -> None:
         self.push_screen(MenuScreen())
 
     def action_toggle_dark(self) -> None:
-        self.theme = ANTENNA_LIGHT.name if self.current_theme.dark else ANTENNA_DARK.name
+        self.theme = GRUVBOX_LIGHT.name if self.current_theme.dark else GRUVBOX_DARK.name
