@@ -29,7 +29,7 @@ make help      # list all commands
 
 ```
 src/
-├── __main__.py         # module entrypoint — launches the TUI
+├── main.py             # module entrypoint — launches the TUI
 ├── core/               # domain logic — no UI imports
 │   ├── sanitizer.py    # Rule protocol + Sanitizer pipeline
 │   └── rules.py        # built-in rules

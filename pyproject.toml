@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-antenna-sanitizer = "src.__main__:main"
+antenna-sanitizer = "src.main:main"
 
 [build-system]
 requires = ["hatchling"]

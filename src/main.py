@@ -1,12 +1,10 @@
-"""Application entry point"""
+from src.tui.app import AntennaSanitizerApp
 
 
-def main() -> int:
-    from src.tui.app import AntennaSanitizerApp  # noqa: PLC0415
-
-    AntennaSanitizerApp().run()
-    return 0
+def main() -> None:
+    app = AntennaSanitizerApp()
+    app.run()
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
