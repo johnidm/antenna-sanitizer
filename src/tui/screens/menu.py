@@ -1,14 +1,14 @@
 """Main menu screen."""
 
-from typing import ClassVar, cast
+from typing import ClassVar
 
-from textual import on, work
+from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding, BindingType
 from textual.containers import Vertical
 from textual.content import Content
 from textual.screen import Screen
-from textual.widgets import Footer, Header, OptionList, Static
+from textual.widgets import Footer, Header, OptionList
 from textual.widgets.option_list import Option
 
 from src.tui.screens.sample import SampleScreen
@@ -47,25 +47,7 @@ class MenuScreen(Screen[None]):
             )
             menu.border_title = "Main menu"
             yield menu
-            yield Static(self._stats("loading stations…"), id="stats")
         yield Footer()
-
-    def on_mount(self) -> None:
-        self._load_station_count()
-
-    def _stats(self, stations: str) -> str:
-        return f"[$secondary]●[/] {stations}"
-
-    @work(thread=True, exclusive=True)
-    def _load_station_count(self) -> None:
-        from src.tui.app import AntennaSanitizerApp  # noqa: PLC0415
-
-        app = cast(AntennaSanitizerApp, self.app)
-        try:
-            label = f"{len(app.get_stations()):,} stations"
-        except OSError, ValueError:
-            label = "[$error]stations unavailable[/]"
-        app.call_from_thread(self.query_one("#stats", Static).update, self._stats(label))
 
     @on(OptionList.OptionSelected)
     def on_option_selected(self, event: OptionList.OptionSelected) -> None:
