@@ -65,10 +65,8 @@ def create_station(  # noqa: PLR0913
     homepage_url: str = "",
     logo_url: str = "",
     tags: str | list[str] = "",
-    station_id: str | None = None,
 ) -> Station:
-    """Create a new station with pending status and auto-generated UUIDv7 if not provided."""
-    sid = station_id or str(getattr(uuid, "uuid7", uuid.uuid4)())
+    """Create a new station with pending status and a generated UUIDv7."""
     if isinstance(tags, str):
         tag_list = [t.strip() for t in tags.split(",") if t.strip()]
         tags_json = json.dumps(tag_list)
@@ -76,7 +74,7 @@ def create_station(  # noqa: PLR0913
         tags_json = json.dumps(tags)
 
     return Station(
-        id=sid,
+        id=str(uuid.uuid7()),
         name=name.strip(),
         country=country.strip(),
         country_code=country_code.strip().upper(),
