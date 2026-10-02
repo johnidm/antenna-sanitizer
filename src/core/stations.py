@@ -3,11 +3,26 @@
 from __future__ import annotations
 
 import csv
+import json
 import random
+import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
+
+CSV_FIELDNAMES: list[str] = [
+    "id",
+    "name",
+    "country",
+    "country_code",
+    "language",
+    "stream_url",
+    "homepage_url",
+    "logo_url",
+    "tags",
+    "status",
+]
 
 
 class StationStatus(StrEnum):
@@ -38,6 +53,38 @@ class Station:
     logo_url: str
     tags: str
     status: StationStatus = StationStatus.PENDING
+
+
+def create_station(  # noqa: PLR0913
+    name: str,
+    stream_url: str,
+    *,
+    country: str = "",
+    country_code: str = "",
+    language: str = "",
+    homepage_url: str = "",
+    logo_url: str = "",
+    tags: str | list[str] = "",
+) -> Station:
+    """Create a new station with pending status and a generated UUIDv7."""
+    if isinstance(tags, str):
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+        tags_json = json.dumps(tag_list)
+    else:
+        tags_json = json.dumps(tags)
+
+    return Station(
+        id=str(uuid.uuid7()),
+        name=name.strip(),
+        country=country.strip(),
+        country_code=country_code.strip().upper(),
+        language=language.strip().lower(),
+        stream_url=stream_url.strip(),
+        homepage_url=homepage_url.strip(),
+        logo_url=logo_url.strip(),
+        tags=tags_json,
+        status=StationStatus.PENDING,
+    )
 
 
 def load_stations(path: Path | None = None) -> list[Station]:
@@ -80,21 +127,8 @@ def save_stations(stations: Sequence[Station], path: Path | None = None) -> None
     csv_path = path or Path(__file__).resolve().parents[2] / "data" / "stations.csv"
     temp_path = csv_path.with_suffix(".csv.tmp")
 
-    fieldnames = [
-        "id",
-        "name",
-        "country",
-        "country_code",
-        "language",
-        "stream_url",
-        "homepage_url",
-        "logo_url",
-        "tags",
-        "status",
-    ]
-
     with temp_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames, lineterminator="\n")
+        writer = csv.DictWriter(fh, fieldnames=CSV_FIELDNAMES, lineterminator="\n")
         writer.writeheader()
         for station in stations:
             writer.writerow(
@@ -113,6 +147,31 @@ def save_stations(stations: Sequence[Station], path: Path | None = None) -> None
             )
 
     temp_path.replace(csv_path)
+
+
+def append_station(station: Station, path: Path | None = None) -> None:
+    """Append a single station to the CSV file."""
+    csv_path = path or Path(__file__).resolve().parents[2] / "data" / "stations.csv"
+    file_exists = csv_path.exists() and csv_path.stat().st_size > 0
+
+    with csv_path.open("a", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=CSV_FIELDNAMES, lineterminator="\n")
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(
+            {
+                "id": station.id,
+                "name": station.name,
+                "country": station.country,
+                "country_code": station.country_code,
+                "language": station.language,
+                "stream_url": station.stream_url,
+                "homepage_url": station.homepage_url,
+                "logo_url": station.logo_url,
+                "tags": station.tags,
+                "status": station.status.value,
+            }
+        )
 
 
 def pick_random(stations: Sequence[Station], n: int = 3) -> list[Station]:

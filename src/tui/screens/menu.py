@@ -11,6 +11,7 @@ from textual.screen import Screen
 from textual.widgets import Footer, Header, OptionList
 from textual.widgets.option_list import Option
 
+from src.tui.screens.add_station import AddStationScreen
 from src.tui.screens.export import ExportScreen
 from src.tui.screens.sample import SampleScreen
 from src.tui.screens.sanitize import SanitizeScreen
@@ -34,6 +35,13 @@ class MenuScreen(Screen[None]):
                     "Random stations",
                     "Tune into 3 stations picked at random",
                     "random-stations",
+                ),
+                None,
+                self._menu_option(
+                    "📻",
+                    "Add station",
+                    "Register a new radio station for sanitization",
+                    "add-station",
                 ),
                 None,
                 self._menu_option(
@@ -63,6 +71,8 @@ class MenuScreen(Screen[None]):
         match event.option.id:
             case "random-stations":
                 self.app.push_screen(SampleScreen())
+            case "add-station":
+                self.app.push_screen(AddStationScreen())
             case "stats":
                 self.app.push_screen(StatsScreen())
             case "export-sql":
