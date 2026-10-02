@@ -155,5 +155,68 @@ Footer {
     margin: 0 1;
 }
 
+/* ---- Add Station ------------------------------------------------------- */
+
+#add-station-body {
+    align: center middle;
+    padding: 1 2;
+    overflow-y: auto;
+}
+
+#add-station-card {
+    width: 82;
+    height: auto;
+    padding: 1 3;
+}
+
+#add-station-header-title {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#add-station-subtitle {
+    text-align: center;
+    margin-bottom: 1;
+}
+
+#add-station-grid {
+    grid-size: 2;
+    grid-gutter: 1 2;
+    grid-rows: auto;
+    height: auto;
+}
+
+.field-group {
+    height: auto;
+}
+
+.field-label {
+    color: $text;
+    text-style: bold;
+    margin-bottom: 0;
+}
+
+.field-group Input {
+    width: 100%;
+}
+
+#add-station-error {
+    text-align: center;
+    height: auto;
+    min-height: 1;
+    margin-top: 1;
+}
+
+#add-station-actions {
+    width: 100%;
+    height: auto;
+    align: center middle;
+    margin-top: 1;
+}
+
+#add-station-actions Button {
+    margin: 0 1;
+}
+
 
 
