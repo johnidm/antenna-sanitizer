@@ -11,6 +11,7 @@ from textual.screen import Screen
 from textual.widgets import Footer, Header, OptionList
 from textual.widgets.option_list import Option
 
+from src.tui.screens.export import ExportScreen
 from src.tui.screens.sample import SampleScreen
 from src.tui.screens.sanitize import SanitizeScreen
 from src.tui.screens.stats import StatsScreen
@@ -42,6 +43,13 @@ class MenuScreen(Screen[None]):
                     "stats",
                 ),
                 None,
+                self._menu_option(
+                    "💾",
+                    "Export SQL",
+                    "Export ready stations to PostgreSQL/SQLite SQL file",
+                    "export-sql",
+                ),
+                None,
                 self._menu_option("✨", "Sanitize text", "In development", "sanitize"),
                 id="menu",
                 classes="card",
@@ -57,6 +65,8 @@ class MenuScreen(Screen[None]):
                 self.app.push_screen(SampleScreen())
             case "stats":
                 self.app.push_screen(StatsScreen())
+            case "export-sql":
+                self.app.push_screen(ExportScreen())
             case "sanitize":
                 self.app.push_screen(SanitizeScreen())
 
