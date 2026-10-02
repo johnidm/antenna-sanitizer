@@ -12,3 +12,7 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# Exported SQL files
+data/exports/*.sql
+
