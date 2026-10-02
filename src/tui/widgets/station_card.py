@@ -9,10 +9,16 @@ from textual.containers import Horizontal, Vertical
 from textual.markup import escape
 from textual.widgets import Link, Static
 
-from src.core.stations import Station
+from src.core.stations import Station, StationStatus
 
 _EMPTY = "[dim]—[/dim]"
 _MAX_TAGS = 5
+
+_STATUS_BADGES: dict[StationStatus, str] = {
+    StationStatus.READY: "[green bold]● ready[/]",
+    StationStatus.REJECTED: "[red bold]● rejected[/]",
+    StationStatus.PENDING: "[yellow bold]● pending[/]",
+}
 
 
 def _country_label(station: Station) -> str:
@@ -39,8 +45,13 @@ def _format_fields(station: Station) -> str:
     languages = ", ".join(part.strip() for part in station.language.split(",") if part.strip())
     tags = _parse_tags(station.tags)[:_MAX_TAGS]
     chips = " ".join(f"[$background on $secondary] {escape(tag)} [/]" for tag in tags)
+    status_label = _STATUS_BADGES.get(
+        station.status,
+        f"[dim]● {escape(station.status.value)}[/]",
+    )
     return "\n".join(
         [
+            _row("Status", status_label),
             _row("Country", escape(_country_label(station))),
             _row("Language", escape(languages)),
             _row("Tags", chips),

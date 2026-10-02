@@ -1,4 +1,4 @@
-"""Radio station CSV loading and sampling."""
+"""Radio station CSV loading, saving, and sampling."""
 
 from __future__ import annotations
 
@@ -6,7 +6,24 @@ import csv
 import random
 from collections.abc import Sequence
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
+
+
+class StationStatus(StrEnum):
+    PENDING = "pending"
+    READY = "ready"
+    REJECTED = "rejected"
+
+    @classmethod
+    def parse(cls, value: str | None) -> StationStatus:
+        """Parse a status string, falling back to PENDING if invalid or missing."""
+        if not value:
+            return cls.PENDING
+        try:
+            return cls(value.strip().lower())
+        except ValueError:
+            return cls.PENDING
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,6 +37,7 @@ class Station:
     homepage_url: str
     logo_url: str
     tags: str
+    status: StationStatus = StationStatus.PENDING
 
 
 def load_stations(path: Path | None = None) -> list[Station]:
@@ -38,12 +56,126 @@ def load_stations(path: Path | None = None) -> list[Station]:
                 homepage_url=row["homepage_url"],
                 logo_url=row["logo_url"],
                 tags=row["tags"],
+                status=StationStatus.parse(row.get("status")),
             )
             for row in reader
         ]
+
+
+def filter_by_status(
+    stations: Sequence[Station],
+    status: StationStatus,
+) -> list[Station]:
+    """Return stations matching the given status."""
+    return [s for s in stations if s.status == status]
+
+
+def load_ready_stations(path: Path | None = None) -> list[Station]:
+    """Load only stations marked as ready for export."""
+    return filter_by_status(load_stations(path), StationStatus.READY)
+
+
+def save_stations(stations: Sequence[Station], path: Path | None = None) -> None:
+    """Save stations back to the CSV file atomically."""
+    csv_path = path or Path(__file__).resolve().parents[2] / "data" / "stations.csv"
+    temp_path = csv_path.with_suffix(".csv.tmp")
+
+    fieldnames = [
+        "id",
+        "name",
+        "country",
+        "country_code",
+        "language",
+        "stream_url",
+        "homepage_url",
+        "logo_url",
+        "tags",
+        "status",
+    ]
+
+    with temp_path.open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        for station in stations:
+            writer.writerow(
+                {
+                    "id": station.id,
+                    "name": station.name,
+                    "country": station.country,
+                    "country_code": station.country_code,
+                    "language": station.language,
+                    "stream_url": station.stream_url,
+                    "homepage_url": station.homepage_url,
+                    "logo_url": station.logo_url,
+                    "tags": station.tags,
+                    "status": station.status.value,
+                }
+            )
+
+    temp_path.replace(csv_path)
 
 
 def pick_random(stations: Sequence[Station], n: int = 3) -> list[Station]:
     if len(stations) < n:
         raise ValueError(f"Need at least {n} stations, found {len(stations)}")
     return random.sample(list(stations), n)
+
+
+@dataclass(frozen=True, slots=True)
+class StationStats:
+    total: int
+    pending: int
+    ready: int
+    rejected: int
+    with_stream: int
+    with_homepage: int
+    countries_count: int
+
+    @property
+    def ready_pct(self) -> float:
+        return (self.ready / self.total * 100) if self.total else 0.0
+
+    @property
+    def pending_pct(self) -> float:
+        return (self.pending / self.total * 100) if self.total else 0.0
+
+    @property
+    def rejected_pct(self) -> float:
+        return (self.rejected / self.total * 100) if self.total else 0.0
+
+
+def compute_stats(stations: Sequence[Station]) -> StationStats:
+    """Compute aggregate counts and readiness statistics."""
+    total = len(stations)
+    pending = 0
+    ready = 0
+    rejected = 0
+    with_stream = 0
+    with_homepage = 0
+    countries: set[str] = set()
+
+    for s in stations:
+        match s.status:
+            case StationStatus.READY:
+                ready += 1
+            case StationStatus.REJECTED:
+                rejected += 1
+            case _:
+                pending += 1
+
+        if s.stream_url.strip():
+            with_stream += 1
+        if s.homepage_url.strip():
+            with_homepage += 1
+        if s.country_code.strip():
+            countries.add(s.country_code.strip().upper())
+
+    return StationStats(
+        total=total,
+        pending=pending,
+        ready=ready,
+        rejected=rejected,
+        with_stream=with_stream,
+        with_homepage=with_homepage,
+        countries_count=len(countries),
+    )

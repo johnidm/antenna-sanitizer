@@ -81,3 +81,33 @@ Footer {
     text-align: center;
     padding: 2 4;
 }
+
+/* ---- Stats ------------------------------------------------------------- */
+
+#stats-heading {
+    margin-bottom: 1;
+    padding: 0 1;
+}
+
+#stats-grid {
+    grid-size: 4;
+    grid-gutter: 1 2;
+    grid-rows: auto;
+    height: auto;
+    margin-bottom: 1;
+
+    &.-narrow {
+        grid-size: 2;
+    }
+
+    &.-very-narrow {
+        grid-size: 1;
+    }
+}
+
+#stats-breakdown {
+    height: auto;
+    margin-top: 1;
+    padding: 1 2;
+}
+
